@@ -1,0 +1,22 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: trust-manager
+  # namespace is patched at runtime to match the configured trustNamespace
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch

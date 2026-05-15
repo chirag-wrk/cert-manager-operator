@@ -63,6 +63,19 @@
 // bindata/networkpolicies/istio-csr-allow-ingress-to-grpc-networkpolicy.yaml
 // bindata/networkpolicies/istio-csr-allow-ingress-to-metrics-networkpolicy.yaml
 // bindata/networkpolicies/istio-csr-deny-all-networkpolicy.yaml
+// bindata/trust-manager/resources/trust-manager-certificate.yaml
+// bindata/trust-manager/resources/trust-manager-clusterrole.yaml
+// bindata/trust-manager/resources/trust-manager-clusterrolebinding.yaml
+// bindata/trust-manager/resources/trust-manager-deployment.yaml
+// bindata/trust-manager/resources/trust-manager-issuer.yaml
+// bindata/trust-manager/resources/trust-manager-leaderelection-role.yaml
+// bindata/trust-manager/resources/trust-manager-leaderelection-rolebinding.yaml
+// bindata/trust-manager/resources/trust-manager-metrics-service.yaml
+// bindata/trust-manager/resources/trust-manager-role.yaml
+// bindata/trust-manager/resources/trust-manager-rolebinding.yaml
+// bindata/trust-manager/resources/trust-manager-service.yaml
+// bindata/trust-manager/resources/trust-manager-serviceaccount.yaml
+// bindata/trust-manager/resources/trust-manager-validatingwebhookconfiguration.yaml
 package assets
 
 import (
@@ -3072,6 +3085,595 @@ func networkpoliciesIstioCsrDenyAllNetworkpolicyYaml() (*asset, error) {
 	return a, nil
 }
 
+var _trustManagerResourcesTrustManagerCertificateYaml = []byte(`apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: trust-manager
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+spec:
+  dnsNames:
+    - trust-manager.cert-manager.svc
+    - trust-manager.cert-manager.svc.cluster.local
+  secretName: trust-manager-tls
+  issuerRef:
+    name: trust-manager
+    kind: Issuer
+`)
+
+func trustManagerResourcesTrustManagerCertificateYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerCertificateYaml, nil
+}
+
+func trustManagerResourcesTrustManagerCertificateYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerCertificateYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-certificate.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerClusterroleYaml = []byte(`kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: trust-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+rules:
+  - apiGroups:
+      - trust.cert-manager.io
+    resources:
+      - bundles
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - trust.cert-manager.io
+    resources:
+      - bundles/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - trust.cert-manager.io
+    resources:
+      - bundles/status
+    verbs:
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - patch
+      - watch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+`)
+
+func trustManagerResourcesTrustManagerClusterroleYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerClusterroleYaml, nil
+}
+
+func trustManagerResourcesTrustManagerClusterroleYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerClusterroleYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-clusterrole.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerClusterrolebindingYaml = []byte(`kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: trust-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: trust-manager
+subjects:
+  - kind: ServiceAccount
+    name: trust-manager
+    namespace: cert-manager
+`)
+
+func trustManagerResourcesTrustManagerClusterrolebindingYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerClusterrolebindingYaml, nil
+}
+
+func trustManagerResourcesTrustManagerClusterrolebindingYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerClusterrolebindingYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-clusterrolebinding.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerDeploymentYaml = []byte(`apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trust-manager
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trust-manager
+  template:
+    metadata:
+      labels:
+        app: trust-manager
+        app.kubernetes.io/name: trust-manager
+        app.kubernetes.io/instance: trust-manager
+        app.kubernetes.io/version: v0.20.3
+        app.kubernetes.io/managed-by: cert-manager-operator
+        app.kubernetes.io/part-of: cert-manager-operator
+    spec:
+      serviceAccountName: trust-manager
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: trust-manager
+          image: quay.io/jetstack/trust-manager:v0.20.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: webhook
+              containerPort: 6443
+              protocol: TCP
+            - name: metrics
+              containerPort: 9402
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              port: 6060
+              path: /readyz
+            initialDelaySeconds: 3
+            periodSeconds: 7
+          args:
+            - --log-level=1
+            - --log-format=text
+            - --metrics-port=9402
+            - --readiness-probe-port=6060
+            - --readiness-probe-path=/readyz
+            - --trust-namespace=cert-manager
+            - --webhook-host=0.0.0.0
+            - --webhook-port=6443
+            - --webhook-certificate-dir=/tls
+          volumeMounts:
+            - name: tls
+              mountPath: /tls
+              readOnly: true
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: tls
+          secret:
+            secretName: trust-manager-tls
+`)
+
+func trustManagerResourcesTrustManagerDeploymentYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerDeploymentYaml, nil
+}
+
+func trustManagerResourcesTrustManagerDeploymentYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerDeploymentYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-deployment.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerIssuerYaml = []byte(`apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: trust-manager
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+spec:
+  selfSigned: {}
+`)
+
+func trustManagerResourcesTrustManagerIssuerYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerIssuerYaml, nil
+}
+
+func trustManagerResourcesTrustManagerIssuerYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerIssuerYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-issuer.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerLeaderelectionRoleYaml = []byte(`kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: trust-manager:leaderelection
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+rules:
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - create
+      - update
+      - watch
+      - list
+`)
+
+func trustManagerResourcesTrustManagerLeaderelectionRoleYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerLeaderelectionRoleYaml, nil
+}
+
+func trustManagerResourcesTrustManagerLeaderelectionRoleYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerLeaderelectionRoleYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-leaderelection-role.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerLeaderelectionRolebindingYaml = []byte(`kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: trust-manager:leaderelection
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: trust-manager:leaderelection
+subjects:
+  - kind: ServiceAccount
+    name: trust-manager
+    namespace: cert-manager
+`)
+
+func trustManagerResourcesTrustManagerLeaderelectionRolebindingYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerLeaderelectionRolebindingYaml, nil
+}
+
+func trustManagerResourcesTrustManagerLeaderelectionRolebindingYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerLeaderelectionRolebindingYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-leaderelection-rolebinding.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerMetricsServiceYaml = []byte(`apiVersion: v1
+kind: Service
+metadata:
+  name: trust-manager-metrics
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+spec:
+  selector:
+    app: trust-manager
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 9402
+      targetPort: 9402
+`)
+
+func trustManagerResourcesTrustManagerMetricsServiceYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerMetricsServiceYaml, nil
+}
+
+func trustManagerResourcesTrustManagerMetricsServiceYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerMetricsServiceYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-metrics-service.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerRoleYaml = []byte(`kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: trust-manager
+  # namespace is patched at runtime to match the configured trustNamespace
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+`)
+
+func trustManagerResourcesTrustManagerRoleYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerRoleYaml, nil
+}
+
+func trustManagerResourcesTrustManagerRoleYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerRoleYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-role.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerRolebindingYaml = []byte(`kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: trust-manager
+  # namespace is patched at runtime to match the configured trustNamespace
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: trust-manager
+subjects:
+  - kind: ServiceAccount
+    name: trust-manager
+    namespace: cert-manager
+`)
+
+func trustManagerResourcesTrustManagerRolebindingYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerRolebindingYaml, nil
+}
+
+func trustManagerResourcesTrustManagerRolebindingYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerRolebindingYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-rolebinding.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerServiceYaml = []byte(`apiVersion: v1
+kind: Service
+metadata:
+  name: trust-manager
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+spec:
+  selector:
+    app: trust-manager
+  ports:
+    - name: webhook
+      protocol: TCP
+      port: 443
+      targetPort: 6443
+`)
+
+func trustManagerResourcesTrustManagerServiceYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerServiceYaml, nil
+}
+
+func trustManagerResourcesTrustManagerServiceYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerServiceYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-service.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerServiceaccountYaml = []byte(`apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trust-manager
+  namespace: cert-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+`)
+
+func trustManagerResourcesTrustManagerServiceaccountYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerServiceaccountYaml, nil
+}
+
+func trustManagerResourcesTrustManagerServiceaccountYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerServiceaccountYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-serviceaccount.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _trustManagerResourcesTrustManagerValidatingwebhookconfigurationYaml = []byte(`apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: trust-manager
+  labels:
+    app: trust-manager
+    app.kubernetes.io/name: trust-manager
+    app.kubernetes.io/instance: trust-manager
+    app.kubernetes.io/version: v0.20.3
+    app.kubernetes.io/managed-by: cert-manager-operator
+    app.kubernetes.io/part-of: cert-manager-operator
+  annotations:
+    cert-manager.io/inject-ca-from: cert-manager/trust-manager
+webhooks:
+  - name: trust.cert-manager.io
+    admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: trust-manager
+        namespace: cert-manager
+        path: /validate-trust-cert-manager-io-v1alpha1-bundle
+    failurePolicy: Fail
+    matchPolicy: Equivalent
+    rules:
+      - apiGroups:
+          - trust.cert-manager.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - bundles
+    sideEffects: None
+`)
+
+func trustManagerResourcesTrustManagerValidatingwebhookconfigurationYamlBytes() ([]byte, error) {
+	return _trustManagerResourcesTrustManagerValidatingwebhookconfigurationYaml, nil
+}
+
+func trustManagerResourcesTrustManagerValidatingwebhookconfigurationYaml() (*asset, error) {
+	bytes, err := trustManagerResourcesTrustManagerValidatingwebhookconfigurationYamlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "trust-manager/resources/trust-manager-validatingwebhookconfiguration.yaml", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -3187,6 +3789,19 @@ var _bindata = map[string]func() (*asset, error){
 	"networkpolicies/istio-csr-allow-ingress-to-grpc-networkpolicy.yaml":                               networkpoliciesIstioCsrAllowIngressToGrpcNetworkpolicyYaml,
 	"networkpolicies/istio-csr-allow-ingress-to-metrics-networkpolicy.yaml":                            networkpoliciesIstioCsrAllowIngressToMetricsNetworkpolicyYaml,
 	"networkpolicies/istio-csr-deny-all-networkpolicy.yaml":                                            networkpoliciesIstioCsrDenyAllNetworkpolicyYaml,
+	"trust-manager/resources/trust-manager-certificate.yaml":                                           trustManagerResourcesTrustManagerCertificateYaml,
+	"trust-manager/resources/trust-manager-clusterrole.yaml":                                           trustManagerResourcesTrustManagerClusterroleYaml,
+	"trust-manager/resources/trust-manager-clusterrolebinding.yaml":                                    trustManagerResourcesTrustManagerClusterrolebindingYaml,
+	"trust-manager/resources/trust-manager-deployment.yaml":                                            trustManagerResourcesTrustManagerDeploymentYaml,
+	"trust-manager/resources/trust-manager-issuer.yaml":                                                trustManagerResourcesTrustManagerIssuerYaml,
+	"trust-manager/resources/trust-manager-leaderelection-role.yaml":                                   trustManagerResourcesTrustManagerLeaderelectionRoleYaml,
+	"trust-manager/resources/trust-manager-leaderelection-rolebinding.yaml":                            trustManagerResourcesTrustManagerLeaderelectionRolebindingYaml,
+	"trust-manager/resources/trust-manager-metrics-service.yaml":                                       trustManagerResourcesTrustManagerMetricsServiceYaml,
+	"trust-manager/resources/trust-manager-role.yaml":                                                  trustManagerResourcesTrustManagerRoleYaml,
+	"trust-manager/resources/trust-manager-rolebinding.yaml":                                           trustManagerResourcesTrustManagerRolebindingYaml,
+	"trust-manager/resources/trust-manager-service.yaml":                                               trustManagerResourcesTrustManagerServiceYaml,
+	"trust-manager/resources/trust-manager-serviceaccount.yaml":                                        trustManagerResourcesTrustManagerServiceaccountYaml,
+	"trust-manager/resources/trust-manager-validatingwebhookconfiguration.yaml":                        trustManagerResourcesTrustManagerValidatingwebhookconfigurationYaml,
 }
 
 // AssetDir returns the file names below a certain
@@ -3308,6 +3923,23 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"istio-csr-allow-ingress-to-grpc-networkpolicy.yaml":         {networkpoliciesIstioCsrAllowIngressToGrpcNetworkpolicyYaml, map[string]*bintree{}},
 		"istio-csr-allow-ingress-to-metrics-networkpolicy.yaml":      {networkpoliciesIstioCsrAllowIngressToMetricsNetworkpolicyYaml, map[string]*bintree{}},
 		"istio-csr-deny-all-networkpolicy.yaml":                      {networkpoliciesIstioCsrDenyAllNetworkpolicyYaml, map[string]*bintree{}},
+	}},
+	"trust-manager": {nil, map[string]*bintree{
+		"resources": {nil, map[string]*bintree{
+			"trust-manager-certificate.yaml":                    {trustManagerResourcesTrustManagerCertificateYaml, map[string]*bintree{}},
+			"trust-manager-clusterrole.yaml":                    {trustManagerResourcesTrustManagerClusterroleYaml, map[string]*bintree{}},
+			"trust-manager-clusterrolebinding.yaml":             {trustManagerResourcesTrustManagerClusterrolebindingYaml, map[string]*bintree{}},
+			"trust-manager-deployment.yaml":                     {trustManagerResourcesTrustManagerDeploymentYaml, map[string]*bintree{}},
+			"trust-manager-issuer.yaml":                         {trustManagerResourcesTrustManagerIssuerYaml, map[string]*bintree{}},
+			"trust-manager-leaderelection-role.yaml":            {trustManagerResourcesTrustManagerLeaderelectionRoleYaml, map[string]*bintree{}},
+			"trust-manager-leaderelection-rolebinding.yaml":     {trustManagerResourcesTrustManagerLeaderelectionRolebindingYaml, map[string]*bintree{}},
+			"trust-manager-metrics-service.yaml":                {trustManagerResourcesTrustManagerMetricsServiceYaml, map[string]*bintree{}},
+			"trust-manager-role.yaml":                           {trustManagerResourcesTrustManagerRoleYaml, map[string]*bintree{}},
+			"trust-manager-rolebinding.yaml":                    {trustManagerResourcesTrustManagerRolebindingYaml, map[string]*bintree{}},
+			"trust-manager-service.yaml":                        {trustManagerResourcesTrustManagerServiceYaml, map[string]*bintree{}},
+			"trust-manager-serviceaccount.yaml":                 {trustManagerResourcesTrustManagerServiceaccountYaml, map[string]*bintree{}},
+			"trust-manager-validatingwebhookconfiguration.yaml": {trustManagerResourcesTrustManagerValidatingwebhookconfigurationYaml, map[string]*bintree{}},
+		}},
 	}},
 }}
 

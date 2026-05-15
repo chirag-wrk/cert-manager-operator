@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
@@ -21,6 +22,7 @@ import (
 
 	v1alpha1 "github.com/openshift/cert-manager-operator/api/operator/v1alpha1"
 	"github.com/openshift/cert-manager-operator/pkg/controller/istiocsr"
+	"github.com/openshift/cert-manager-operator/pkg/controller/trustmanager"
 	"github.com/openshift/cert-manager-operator/pkg/version"
 )
 
@@ -33,6 +35,7 @@ func init() {
 	ctrllog.SetLogger(klog.NewKlogr())
 
 	utilruntime.Must(clientscheme.AddToScheme(scheme))
+	utilruntime.Must(admissionregistrationv1.AddToScheme(scheme))
 	utilruntime.Must(appsv1.AddToScheme(scheme))
 	utilruntime.Must(corev1.AddToScheme(scheme))
 	utilruntime.Must(networkingv1.AddToScheme(scheme))
@@ -79,5 +82,40 @@ func NewControllerManager() (*Manager, error) {
 // Start starts the operator synchronously until a message is received from ctx.
 func (mgr *Manager) Start(ctx context.Context) error {
 	mgr.manager.GetEventRecorderFor("cert-manager-istio-csr-controller").Event(&v1alpha1.IstioCSR{}, corev1.EventTypeNormal, "ControllerStarted", "controller is starting")
+	return mgr.manager.Start(ctx)
+}
+
+// NewTrustManagerControllerManager creates a new manager for the trust-manager controller.
+func NewTrustManagerControllerManager(operatorNamespace string) (*Manager, error) {
+	setupLog.Info("setting up operator manager", "controller", trustmanager.ControllerName)
+	setupLog.Info("controller", "version", version.Get())
+
+	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+		Scheme: scheme,
+		// Use custom cache builder to configure label selectors for managed resources
+		NewCache: trustmanager.NewCacheBuilder,
+		Logger:   ctrl.Log.WithName("operator-manager"),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create manager: %w", err)
+	}
+
+	r, err := trustmanager.New(mgr, operatorNamespace)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create %s reconciler object: %w", trustmanager.ControllerName, err)
+	}
+	if err := r.SetupWithManager(mgr); err != nil {
+		return nil, fmt.Errorf("failed to create %s controller: %w", trustmanager.ControllerName, err)
+	}
+	// +kubebuilder:scaffold:builder
+
+	return &Manager{
+		manager: mgr,
+	}, nil
+}
+
+// StartTrustManager starts the trust-manager operator synchronously until a message is received from ctx.
+func (mgr *Manager) StartTrustManager(ctx context.Context) error {
+	mgr.manager.GetEventRecorderFor("cert-manager-trust-manager-controller").Event(&v1alpha1.TrustManager{}, corev1.EventTypeNormal, "ControllerStarted", "controller is starting")
 	return mgr.manager.Start(ctx)
 }

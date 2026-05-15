@@ -6,6 +6,7 @@ import (
 	"time"
 
 	apiextensionsclient "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -95,6 +96,17 @@ func RunOperator(ctx context.Context, cc *controllercmd.ControllerContext) error
 		return fmt.Errorf("failed to discover Infrastructure presence: %w", err)
 	}
 
+	featureGateGVR := configv1.GroupVersion.WithResource("featuregates")
+	optFeatureGateInformer, err := optionalinformer.NewOptionalInformer(
+		ctx, featureGateGVR, configClient.Discovery(),
+		func() configinformers.SharedInformerFactory {
+			return configinformers.NewSharedInformerFactory(configClient, resyncInterval)
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("failed to discover FeatureGates presence: %w", err)
+	}
+
 	certManagerControllerSet := deployment.NewCertManagerControllerSet(
 		kubeClient,
 		kubeInformersForNamespaces,
@@ -152,6 +164,44 @@ func RunOperator(ctx context.Context, cc *controllercmd.ControllerContext) error
 		}
 	}
 
+	// enable controller-runtime and trust-manager controller
+	// only when "TrustManager" feature is turned on from --addon-features
+	// and the cluster FeatureSet is TechPreview-compatible (or featuregates resource absent, e.g. MicroShift)
+	if features.DefaultFeatureGate.Enabled(v1alpha1.FeatureTrustManager) {
+		compatible, err := isTechPreviewCompatible(ctx, optFeatureGateInformer, configClient)
+		if err != nil {
+			return fmt.Errorf("failed to check FeatureSet compatibility for trust-manager: %w", err)
+		}
+		if compatible {
+			tmManager, err := NewTrustManagerControllerManager(operatorclient.OperatorNamespace)
+			if err != nil {
+				return fmt.Errorf("failed to create trust-manager controller manager: %w", err)
+			}
+			if err := tmManager.StartTrustManager(ctrl.SetupSignalHandler()); err != nil {
+				return fmt.Errorf("failed to start trust-manager controller: %w", err)
+			}
+		}
+	}
+
 	<-ctx.Done()
 	return nil
+}
+
+// isTechPreviewCompatible returns true if the cluster FeatureSet allows trust-manager to run.
+// When the featuregates resource is absent (MicroShift), returns true unconditionally per FR-003.
+func isTechPreviewCompatible(ctx context.Context, optInformer *optionalinformer.OptionalInformer[configinformers.SharedInformerFactory], configClient configv1client.Interface) (bool, error) {
+	if !optInformer.Applicable() {
+		// featuregates.config.openshift.io resource not found — running on MicroShift, skip check
+		return true, nil
+	}
+	featureGate, err := configClient.ConfigV1().FeatureGates().Get(ctx, "cluster", metav1.GetOptions{})
+	if err != nil {
+		return false, fmt.Errorf("failed to get cluster FeatureGates: %w", err)
+	}
+	switch featureGate.Spec.FeatureSet {
+	case configv1.TechPreviewNoUpgrade, configv1.DevPreviewNoUpgrade, configv1.CustomNoUpgrade:
+		return true, nil
+	default:
+		return false, nil
+	}
 }
