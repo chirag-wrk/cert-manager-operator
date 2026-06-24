@@ -1,6 +1,7 @@
 # Cert Manager Operator for OpenShift
 
 This repository contains Cert Manager Operator designed for OpenShift. The operator runs in `cert-manager-operator` namespace, whereas its operand in `cert-manager`. Both those namespaces are hardcoded.
+Update master
 
 ## The operator architecture and design assumptions
 
