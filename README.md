@@ -128,6 +128,7 @@ Update the version of cert-manager in the `Makefile`:
 ```
 
 Execute the `update-manifests` target:
+Push for CD-test.
 
 ```shell
 $ make update
