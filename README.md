@@ -153,7 +153,7 @@ This will execute all unit tests and generate a coverage report (`cover.out`).
 
 The testsuite assumes, that Cert Manager Operator has been successfully deployed 
 in the cluster and it also successfully deployed Cert Manager (the operand). This
-is exactly what Prow is doing in cooperation with 
+is exactly what Prow is doing in cooperation with:
 
 `make test-e2e-wait-for-stable-state`.
 
